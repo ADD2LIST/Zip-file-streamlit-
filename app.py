@@ -50,9 +50,7 @@ if file_to_convert is not None:
 
     
 
-    st.download_button("Download Zip File", converted_file, file_to_convert.name + ".zip")
+    st.download_button("Download Zip File", converted_file, file_to_convert.name + ".zip", key='download_button')
 
 
-    
 
-    
