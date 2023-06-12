@@ -1,54 +1,55 @@
 import streamlit as st
 
-import zipfile
+import PyPDF2
 
-def convert_file_to_zip(file_path):
+def lock_pdf(file, password):
 
-  """Converts a file to a zip file.
+    pdf = PyPDF2.PdfFileReader(file)
 
-  Args:
+    pdf.encrypt(password)
 
-    file_path: The path to the file to convert.
-
-  Returns:
-
-    A zip file object.
-
-  """
-
-  with zipfile.ZipFile(file_path + ".zip", "w") as zip_file:
-
-    zip_file.write(file_path)
+    return pdf
 
 def main():
 
-  """The main function of the Streamlit application."""
+    st.title("PDF Locker")
 
-  # Get the file to convert.
+    # File upload
 
-  file_path = st.file_uploader("Upload a file", type=["*"])
+    st.header("Upload PDF")
 
-  # If a file was uploaded, convert it to a zip file and provide a download option.
+    uploaded_file = st.file_uploader("Choose a PDF file", type=["pdf"])
 
-  if file_path is not None:
+    # Password input
 
-    with open(file_path, "rb") as f:
+    st.header("Set Password")
 
-      zip_file = convert_file_to_zip(f.name)
+    password = st.text_input("Enter the password", type="password")
 
-    st.download_button(
+    if uploaded_file and password:
 
-      label="Download Zip File",
+        locked_pdf = lock_pdf(uploaded_file, password)
 
-      data=zip_file,
+        # Download the locked PDF file
 
-      file_name=file_path.name + ".zip"
+        with st.beta_expander("Download Locked PDF"):
 
-    )
+            st.download_button(
+
+                label="Download",
+
+                data=locked_pdf.stream(),
+
+                file_name="locked_pdf.pdf",
+
+                mime="application/pdf"
+
+            )
 
 if __name__ == "__main__":
 
-  main()
+    main()
 
 
-    
+
+      
