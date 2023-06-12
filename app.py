@@ -8,13 +8,15 @@ import os
 
 def convert_to_zip(file_path):
 
-    zip_path = file_path + ".zip"  # Set the output zip file path
+    directory, filename = os.path.split(file_path)
+
+    zip_path = os.path.join(directory, f"{filename}.zip")  # Set the output zip file path
 
     
 
     with zipfile.ZipFile(zip_path, 'w') as zip_file:
 
-        zip_file.write(file_path, arcname=os.path.basename(file_path))  # Add the file to the zip archive
+        zip_file.write(file_path, arcname=filename)  # Add the file to the zip archive
 
     
 
@@ -48,7 +50,7 @@ if file_to_convert is not None:
 
     
 
-    st.download_button("Download Zip File", converted_file)
+    st.download_button("Download Zip File", converted_file, file_to_convert.name + ".zip")
 
 
     
