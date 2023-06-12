@@ -2,7 +2,9 @@ import streamlit as st
 
 import zipfile
 
-import io
+import tempfile
+
+import os
 
 def convert_to_zip(file_path):
 
@@ -12,7 +14,7 @@ def convert_to_zip(file_path):
 
     with zipfile.ZipFile(zip_path, 'w') as zip_file:
 
-        zip_file.write(file_path, arcname=file_path)  # Add the file to the zip archive
+        zip_file.write(file_path, arcname=os.path.basename(file_path))  # Add the file to the zip archive
 
     
 
@@ -30,17 +32,17 @@ if file_to_convert is not None:
 
     
 
-    # Save the uploaded file to a temporary location on disk
+    # Save the uploaded file to a temporary directory on disk
 
-    temp_file = io.BytesIO()
+    with tempfile.NamedTemporaryFile(delete=False) as temp_file:
 
-    temp_file.write(file_to_convert.read())
+        temp_file.write(file_to_convert.read())
 
-    temp_file.seek(0)
+        temp_file_path = temp_file.name
 
     
 
-    converted_file = convert_to_zip(file_to_convert.name)
+    converted_file = convert_to_zip(temp_file_path)
 
     st.write(f"File '{file_to_convert.name}' successfully converted to '{converted_file}'.")
 
@@ -49,3 +51,6 @@ if file_to_convert is not None:
     st.download_button("Download Zip File", converted_file)
 
 
+    
+
+    
